@@ -82,8 +82,12 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
         uint16_t data2 = (frame->data[2] << 8) | frame->data[3];
         uint16_t data3 = (frame->data[4] << 8) | frame->data[5];
         uint16_t data4 = (frame->data[6] << 8) | frame->data[7];
-        int value = (int)data1;
-        msg.data = value;
+        int value1 = (int)data1;
+        int value2 = (int)data2;
+        int value3 = (int)data3;
+        int value4 = (int)data4;
+        std::cout<<"1号："<<value1<<"2:"<<value2<<"3:"<<value3<<"4:"<<value4<<std::endl;
+        msg.data = value1;
         pub.publish(msg);
     }
 }
