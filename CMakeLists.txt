@@ -115,7 +115,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -133,21 +133,28 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/serial_connect_node.cpp)
-add_executable(ultrasonic src/ultrasonic.cpp)
+add_executable(a22_radar src/a22_radar.cpp src/add_CRC.cpp)
 
-add_dependencies(ultrasonic ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
-target_link_libraries(ultrasonic
+target_link_libraries(a22_radar
   ${catkin_LIBRARIES}
 )
+# add_executable(add_CRC src/add_CRC.cpp)
 
-add_executable(Sensor src/Sensor.cpp)
+# add_dependencies(add_CRC ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
-add_dependencies(Sensor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# target_link_libraries(add_CRC
+#   ${catkin_LIBRARIES}
+# )
+
+# add_executable(Sensor src/Sensor.cpp)
  
-target_link_libraries(Sensor
-  ${catkin_LIBRARIES}
-)
+# add_dependencies(Sensor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
+# target_link_libraries(Sensor
+#   ${catkin_LIBRARIES}
+# )
 add_executable(radar src/radar.cpp)
  
 add_dependencies(radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
