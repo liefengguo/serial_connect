@@ -105,24 +105,24 @@ int main(int argc, char **argv) {
     CMD_01[CMD_LENGTH - 2] = pucCRCLo;
     cout<<hex<<static_cast<int>(pucCRCHi)<<static_cast<int>(pucCRCLo)<<"result:"<<result<<endl;
     // 初始化串口
-    // serial::Serial ser(SERIAL_PORT, BAUDRATE, serial::Timeout::simpleTimeout(100));
+    serial::Serial ser(SERIAL_PORT, BAUDRATE, serial::Timeout::simpleTimeout(100));
 
 
-    // // 启动发送和接收线程
-    // std::mutex mutex;
-    // std::condition_variable cv;
-    // bool isRunning = true;
-    // std::thread sendThread(sendThreadFunc, std::ref(ser), std::ref(mutex), std::ref(cv), std::ref(isRunning));
-    // std::thread receiveThread(receiveThreadFunc, std::ref(ser), std::ref(mutex), std::ref(cv), std::ref(isRunning), std::ref(pub));
+    // 启动发送和接收线程
+    std::mutex mutex;
+    std::condition_variable cv;
+    bool isRunning = true;
+    std::thread sendThread(sendThreadFunc, std::ref(ser), std::ref(mutex), std::ref(cv), std::ref(isRunning));
+    std::thread receiveThread(receiveThreadFunc, std::ref(ser), std::ref(mutex), std::ref(cv), std::ref(isRunning), std::ref(pub));
 
-    // // 等待程序结束
-    // ros::spin();
+    // 等待程序结束
+    ros::spin();
 
-    // // 停止发送和接收线程
-    // isRunning = false;
-    // cv.notify_all();
-    // sendThread.join();
-    // receiveThread.join();
+    // 停止发送和接收线程
+    isRunning = false;
+    cv.notify_all();
+    sendThread.join();
+    receiveThread.join();
 
     return 0;
 }
