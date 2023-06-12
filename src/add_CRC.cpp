@@ -87,9 +87,27 @@ uint16_t usMBCRC16(uint8_t * pucFrame, uint16_t usLen,uint8_t &pucCRCHi,uint8_t 
     pucCRCLo = ucCRCLo;
 
 	//当所有字节都执行完毕后，返回CRC寄存器中的高低字节数值，即为最终CRC数值。
-	return (uint16_t)(ucCRCHi << 8 | ucCRCLo);//CRC高位在左，低位在右
+	// return (uint16_t)( ucCRCHi << 8 | ucCRCLo);//CRC高位在right，低位在left
+	return (uint16_t)( ucCRCLo << 8 | ucCRCHi);//CRC高位在right，低位在left
 }
+uint16_t usMBCRC16(uint8_t * pucFrame, uint16_t usLen)//pucFrame=指向数据首字节的指针，usLen=数据字节数
+{
+	uint8_t ucCRCHi = 0xFF;
+	uint8_t ucCRCLo = 0xFF;//初始化CRC寄存器为0xFFFF
+	int iIndex;
+	while (usLen--)
+	{
+		iIndex = ucCRCLo ^ *(pucFrame++);//第一次为初始化，使数据的首字节与CRC寄存器低八位异或后存入临时寄存器
+										 //iIndex即为CRC表格索引
+		ucCRCLo = ucCRCHi ^ aucCRCHi[iIndex];//查表，将第i次的iIndex值在高字节CRC查找表中找到，
+											 //并与CRC寄存器高字节按位异或后，值赋给CRC低字节寄存器
+		ucCRCHi = aucCRCLo[iIndex];//查表，将第i次的iIndex值在低字节CRC查找表中找到，并赋值给CRC高字节寄存器
+	}
 
+
+	//当所有字节都执行完毕后，返回CRC寄存器中的高低字节数值，即为最终CRC数值。
+	return (uint16_t)( ucCRCLo << 8 | ucCRCHi);//CRC高位在right，低位在left
+}
 //主函数
 // int main()
 // {

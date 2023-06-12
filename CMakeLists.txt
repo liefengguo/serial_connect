@@ -162,6 +162,13 @@ add_dependencies(radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TAR
 target_link_libraries(radar
   ${catkin_LIBRARIES}
 )
+add_executable(decition_radar src/decition_radar.cpp src/adaptive_filter.cpp)
+ 
+add_dependencies(decition_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
+target_link_libraries(decition_radar
+  ${catkin_LIBRARIES}
+)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
