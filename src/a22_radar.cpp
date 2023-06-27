@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
     uint8_t pucCRCHi , pucCRCLo; 
 
     // 创建ROS话题
-    ros::Publisher pub = nh.advertise<std_msgs::Int32>("temperature", 1000);
+    ros::Publisher pub = nh.advertise<std_msgs::Int32>("a22_radar", 1000);
    uint16_t result =  usMBCRC16(CMD_01,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
     CMD_01[CMD_LENGTH - 1] = pucCRCHi;
     CMD_01[CMD_LENGTH - 2] = pucCRCLo;

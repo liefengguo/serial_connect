@@ -11,20 +11,24 @@ private:
 
     double targetDistance ;  // 目标距离
     double distanceThreshold ;  // 距离阈值
+    int bufferSize; 
+    double threshold;
 
 
 public:
     DistanceSensor() {
         sub_ = nh_.subscribe("temperature", 1, &DistanceSensor::distanceCallback, this);
 
-        targetDistance = 230.0;  // 目标距离
-        distanceThreshold = 80.0;  // 距离阈值
 
+        nh_.param<double>("distance_monitor/targetDistance", targetDistance, 230);
+        nh_.param<double>("distance_monitor/distanceThreshold", distanceThreshold, 80);
+        nh_.param<int>("distance_monitor/bufferSize", bufferSize, 20);
+        nh_.param<double>("distance_monitor/threshold", threshold, 50);
     }
 
     void distanceCallback(const std_msgs::Int32::ConstPtr& msg) {
         distance_ = msg->data;
-        static AdaptiveFilter filter(10,0.25);  // 使用大小为10的自适应滤波器和2倍标准差阈值
+        static AdaptiveFilter filter(bufferSize,threshold);  
 
         double filteredDistance = filter.filter(distance_);  // 应用自适应滤波器
         std::cout<<"真值："<<distance_<< "距离："<<filteredDistance<<std::endl;
@@ -33,12 +37,12 @@ public:
         if (filteredDistance < targetDistance - distanceThreshold) {
             // 距离过近，需要向左调整车辆行驶方向
             // 在这里添加调整车辆方向的代码
-            std::cout<< "距离过近，left"<<std::endl;
+            std::cout<< "距离过近，left:"<<filteredDistance - targetDistance<<std::endl;
 
         } else if (filteredDistance > targetDistance + distanceThreshold) {
             // 距离过远，需要向左调整车辆行驶方向
             // 在这里添加调整车辆方向的代码
-            std::cout<< "distance too far， right please!!"<<std::endl;
+            std::cout<< "distance too far， right please!!"<<filteredDistance - targetDistance<<std::endl;
         } else {
             // 距离在目标范围内，维持当前行驶方向
             // 在这里添加维持当前行驶方向的代码

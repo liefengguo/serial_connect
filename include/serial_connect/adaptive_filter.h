@@ -1,22 +1,21 @@
 #ifndef ADAPTIVE_FILTER_H
 #define ADAPTIVE_FILTER_H
 
-#include <vector>
-
+#include <deque>
+#include <iostream>
 class AdaptiveFilter {
-private:
-    std::vector<double> buffer;
-    size_t bufferSize;
-    double thresholdMultiplier;
-    double sum;
-
 public:
-    AdaptiveFilter(size_t size, double multiplier);
+    AdaptiveFilter(int bufferSize, double threshold);
 
     double filter(double value);
 
 private:
-    bool isOutlier(double value);
+    int bufferSize;
+    double threshold;
+    std::deque<double> buffer;
+
+    bool isOutlier(double value) const;
+    double calculateAverage() const;
 };
 
 #endif  // ADAPTIVE_FILTER_H
