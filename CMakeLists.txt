@@ -9,7 +9,16 @@ project(serial_connect)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  message_generation
   serial
+)
+add_message_files(
+  FILES
+  a22_data.msg
+)
+generate_messages(
+   DEPENDENCIES
+   std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -138,6 +147,13 @@ add_executable(a22_radar src/a22_radar.cpp src/add_CRC.cpp)
 add_dependencies(a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
 target_link_libraries(a22_radar
+  ${catkin_LIBRARIES}
+)
+add_executable(six_a22_radar src/six_a22_radar.cpp src/add_CRC.cpp)
+
+add_dependencies(six_a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
+target_link_libraries(six_a22_radar
   ${catkin_LIBRARIES}
 )
 # add_executable(add_CRC src/add_CRC.cpp)

@@ -5,7 +5,7 @@
 #include <condition_variable>
 #include <std_msgs/Int32.h>
 #include "../include/serial_connect/add_CRC.h"
-
+#include <serial_connect/a22_data.h>
 // 串口参数
 #define SERIAL_PORT "/dev/ttyUSB0"
 #define BAUDRATE 115200
@@ -39,11 +39,11 @@ void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_varia
         {
             std::lock_guard<std::mutex> lock(mutex);
             ser.write(CMD_01, CMD_LENGTH);
-            // ser.write(CMD_02, CMD_LENGTH);
-            // ser.write(CMD_03, CMD_LENGTH);
-            // ser.write(CMD_04, CMD_LENGTH);
-            // ser.write(CMD_05, CMD_LENGTH);
-            // ser.write(CMD_06, CMD_LENGTH);
+            ser.write(CMD_02, CMD_LENGTH);
+            ser.write(CMD_03, CMD_LENGTH);
+            ser.write(CMD_04, CMD_LENGTH);
+            ser.write(CMD_05, CMD_LENGTH);
+            ser.write(CMD_06, CMD_LENGTH);
 
         }
         cv.notify_all();
@@ -73,34 +73,67 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
 
         // 解析数据
         Frame *frame = (Frame *)buffer;
-         if (frame->header != HEADER && frame->address != 0x03) {
+        if (frame->address != 0x03) {
              int count = ser.read(buffer, FRAME_LENGTH-1);
              ROS_ERROR("Invalid response header.");
              continue; // 解析失败，跳过此次循环
-         }
+        }
+        uint16_t data1 ,data2,data3,data4,data5,data6;
+        switch (frame->header)
+        {
+        case HEADER:
+            /* code */
+            data1 = (frame->data[0] << 8) | frame->data[1];
+            break;
+        case 0x02:
+            /* code */
+            data2 = (frame->data[0] << 8) | frame->data[1];
+            break;
+        case 0x03:
+            /* code */
+            data3 = (frame->data[0] << 8) | frame->data[1];
+            break;
+        case 0x04 :
+            /* code */
+            data4 = (frame->data[0] << 8) | frame->data[1];
+            break;
+        case 0x05:
+            /* code */
+            data5 = (frame->data[0] << 8) | frame->data[1];
+            break;
+        case 0x06:
+            /* code */
+            data6 = (frame->data[0] << 8) | frame->data[1];
+            break;
+        default:
+            break;
+        }
         
-        uint16_t crc = usMBCRC16(buffer,FRAME_LENGTH - 2);
-
-        if(frame->checksum != crc){
-            int count = ser.read(buffer, FRAME_LENGTH-3);
-            ROS_ERROR("Invalid CRC.");
-            continue; // 解析失败，跳过此次循环
-         }
+        // uint16_t crc = usMBCRC16(buffer,FRAME_LENGTH - 2);
+        // if(frame->checksum != crc){
+        //     int count = ser.read(buffer, FRAME_LENGTH-3);
+        //     ROS_ERROR("Invalid CRC.");
+        //     continue; // 解析失败，跳过此次循环
+        //  }
 
         // 发布ROS话题
-        std_msgs::Int32 msg;
-        uint16_t data1 = (frame->data[0] << 8) | frame->data[1];
+        serial_connect::a22_data a22_data;
+        std::vector<int32_t> datas;
+        datas.push_back(data1);
+        datas.push_back(data2);
+        datas.push_back(data3);
+        datas.push_back(data4);
+        datas.push_back(data5);
+        datas.push_back(data6);
 
 //        uint16_t data2 = (frame->data[2] << 8) | frame->data[3];
 //        uint16_t data3 = (frame->data[4] << 8) | frame->data[5];
 //        uint16_t data4 = (frame->data[6] << 8) | frame->data[7];
-        int value1 = (int)data1;
-//        int value2 = (int)data2;
-//        int value3 = (int)data3;
-//        int value4 = (int)data4;
-        std::cout<<"1号："<<value1<< " 03:"<< static_cast<int>(frame->data[0]) << " 04:"<<static_cast<int>(frame->data[1])<<std::endl;
-        msg.data = value1;
-        pub.publish(msg);
+
+        std::cout<<"1号："<<data1<<"2号："<<data2<<"3号："<<data3<<"4号："<<data4<<"5号："<<data5<<"6号："<<data6<<std::endl;
+        // std::cout<<"1号："<<data1<< " 03:"<< static_cast<int>(frame->data[0]) << " 04:"<<static_cast<int>(frame->data[1])<<std::endl;
+        a22_data.a22_datas = datas;
+        pub.publish(a22_data);
     }
 }
 
@@ -110,7 +143,7 @@ int main(int argc, char **argv) {
     uint8_t pucCRCHi , pucCRCLo; 
 
     // 创建ROS话题
-    ros::Publisher pub = nh.advertise<std_msgs::Int32>("a22_radar", 1000);
+    ros::Publisher pub = nh.advertise<serial_connect::a22_data>("a22_radar", 1000);
    uint16_t result =  usMBCRC16(CMD_01,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
     CMD_01[CMD_LENGTH - 1] = pucCRCHi;
     CMD_01[CMD_LENGTH - 2] = pucCRCLo;
@@ -137,5 +170,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-   
