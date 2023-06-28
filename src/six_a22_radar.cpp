@@ -7,7 +7,7 @@
 #include "../include/serial_connect/add_CRC.h"
 #include <serial_connect/a22_data.h>
 // 串口参数
-#define SERIAL_PORT "/dev/ttyUSB0"
+// #define SERIAL_PORT "/dev/ttyUSB0"
 #define BAUDRATE 115200
 
 // 控制指令
@@ -140,7 +140,10 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
 int main(int argc, char **argv) {
     ros::init(argc, argv, "a22_radar_node");
     ros::NodeHandle nh;
-    uint8_t pucCRCHi , pucCRCLo; 
+    uint8_t pucCRCHi , pucCRCLo;
+    std::string SERIAL_PORT;
+    nh.param<string>("a22_radar_node/SERIAL_PORT", SERIAL_PORT, "/dev/ttyUSB0");
+        // nh_.param<int>("distance_monitor/bufferSize", bufferSize, 20);
 
     // 创建ROS话题
     ros::Publisher pub = nh.advertise<serial_connect::a22_data>("a22_radar", 1000);
