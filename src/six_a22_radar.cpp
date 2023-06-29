@@ -150,6 +150,22 @@ int main(int argc, char **argv) {
    uint16_t result =  usMBCRC16(CMD_01,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
     CMD_01[CMD_LENGTH - 1] = pucCRCHi;
     CMD_01[CMD_LENGTH - 2] = pucCRCLo;
+    uint16_t result2 =  usMBCRC16(CMD_02,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
+    CMD_02[CMD_LENGTH - 1] = pucCRCHi;
+    CMD_02[CMD_LENGTH - 2] = pucCRCLo;
+    uint16_t result3 =  usMBCRC16(CMD_03,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
+    CMD_03[CMD_LENGTH - 1] = pucCRCHi;
+    CMD_03[CMD_LENGTH - 2] = pucCRCLo;
+    uint16_t result4 =  usMBCRC16(CMD_04,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
+    CMD_04[CMD_LENGTH - 1] = pucCRCHi;
+    CMD_04[CMD_LENGTH - 2] = pucCRCLo;
+    uint16_t result5 =  usMBCRC16(CMD_05,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
+    CMD_05[CMD_LENGTH - 1] = pucCRCHi;
+    CMD_05[CMD_LENGTH - 2] = pucCRCLo;
+    uint16_t result6 =  usMBCRC16(CMD_06,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
+    CMD_06[CMD_LENGTH - 1] = pucCRCHi;
+    CMD_06[CMD_LENGTH - 2] = pucCRCLo;
+
     cout<<hex<<static_cast<int>(pucCRCHi)<<static_cast<int>(pucCRCLo)<<"result:"<<result<<endl;
     // 初始化串口
     serial::Serial ser(SERIAL_PORT, BAUDRATE, serial::Timeout::simpleTimeout(100));
