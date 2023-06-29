@@ -90,7 +90,7 @@ void get_six_a22(serial::Serial &ser, ros::Publisher &pub){
          default:
             break;
         }
-        usleep(10000); // 10毫秒
+        usleep(30000); // 300毫秒
         datas.push_back(read_a22(ser,i));
     }
         a22_data.a22_datas = datas;
