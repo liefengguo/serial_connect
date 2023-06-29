@@ -3,13 +3,10 @@
   <!-- <arg name="topic_name" default="/djiros/rtk_position" /> -->
   <!-- <arg name="topic_name" default="/fixposition/navsatfix" /> -->
 
-  <node pkg="serial_connect" type="six_a22_radar" name="six_a22_radar" output="screen">
-    <!-- <param name="file_path" value="$(find xunji)/output/position.txt" /> -->
-    <!-- <param name="topic_name" value="/fixposition/navsatfix" /> -->
-    <!-- <param name="topic_name" value="/djiros/rtk_position" /> -->
+  <!-- <node pkg="serial_connect" type="six_a22_radar" name="six_a22_radar" output="screen">
     <param name="SERIAL_PORT" value="/dev/ttyUSB0" />
-    <!-- <param name="distanceThreshold" value="80.0" />
-    <param name="bufferSize" value="20" />
-    <param name="threshold" value="50.0" /> -->
+  </node> -->
+  <node pkg="serial_connect" type="six_a22" name="six_a22" output="screen">
+  <param name="SERIAL_PORT" value="/dev/ttyUSB0" />
   </node>
 </launch>

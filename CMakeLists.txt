@@ -149,11 +149,18 @@ add_dependencies(a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED
 target_link_libraries(a22_radar
   ${catkin_LIBRARIES}
 )
-add_executable(six_a22_radar src/six_a22_radar.cpp src/add_CRC.cpp)
+# add_executable(six_a22_radar src/six_a22_radar.cpp src/add_CRC.cpp)
 
-add_dependencies(six_a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(six_a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
-target_link_libraries(six_a22_radar
+# target_link_libraries(six_a22_radar
+#   ${catkin_LIBRARIES}
+# )
+add_executable(six_a22 src/six_a22.cpp src/add_CRC.cpp)
+
+add_dependencies(six_a22 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
+target_link_libraries(six_a22
   ${catkin_LIBRARIES}
 )
 # add_executable(add_CRC src/add_CRC.cpp)
