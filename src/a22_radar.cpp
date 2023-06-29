@@ -13,11 +13,6 @@
 // 控制指令
 #define CMD_LENGTH 8
 uint8_t CMD_01[CMD_LENGTH] = {0x01, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
-uint8_t CMD_02[CMD_LENGTH] = {0x02, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
-uint8_t CMD_03[CMD_LENGTH] = {0x03, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
-uint8_t CMD_04[CMD_LENGTH] = {0x04, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
-uint8_t CMD_05[CMD_LENGTH] = {0x05, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
-uint8_t CMD_06[CMD_LENGTH] = {0x06, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
 
 // 接收数据帧结构
 #define FRAME_LENGTH 7
@@ -31,6 +26,14 @@ typedef struct {
     uint16_t  checksum; // 校验位
 } Frame;
 
+// 计算校验位
+uint8_t calculateChecksum(uint8_t *data, uint8_t length) {
+    uint8_t sum = 0;
+    for (int i = 0; i < length; i++) {
+        sum += data[i];
+    }
+    return sum & 0xFF;
+}
 
 // 发送指令线程函数
 void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_variable &cv, bool &isRunning) {
@@ -39,12 +42,6 @@ void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_varia
         {
             std::lock_guard<std::mutex> lock(mutex);
             ser.write(CMD_01, CMD_LENGTH);
-            // ser.write(CMD_02, CMD_LENGTH);
-            // ser.write(CMD_03, CMD_LENGTH);
-            // ser.write(CMD_04, CMD_LENGTH);
-            // ser.write(CMD_05, CMD_LENGTH);
-            // ser.write(CMD_06, CMD_LENGTH);
-
         }
         cv.notify_all();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -73,19 +70,12 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
 
         // 解析数据
         Frame *frame = (Frame *)buffer;
-         if (frame->header != HEADER && frame->address != 0x03) {
+         if (frame->header != HEADER && frame->address != 0x03 && buffer[7] != HEADER) {
              int count = ser.read(buffer, FRAME_LENGTH-1);
              ROS_ERROR("Invalid response header.");
              continue; // 解析失败，跳过此次循环
          }
-        
-        uint16_t crc = usMBCRC16(buffer,FRAME_LENGTH - 2);
 
-        if(frame->checksum != crc){
-            int count = ser.read(buffer, FRAME_LENGTH-3);
-            ROS_ERROR("Invalid CRC.");
-            continue; // 解析失败，跳过此次循环
-         }
 
         // 发布ROS话题
         std_msgs::Int32 msg;
@@ -110,13 +100,12 @@ int main(int argc, char **argv) {
     uint8_t pucCRCHi , pucCRCLo; 
 
     // 创建ROS话题
-    ros::Publisher pub = nh.advertise<std_msgs::Int32>("a22_radar", 1000);
-   uint16_t result =  usMBCRC16(CMD_01,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
+    ros::Publisher pub = nh.advertise<std_msgs::Int32>("temperature", 10);
+	uint16_t result =  usMBCRC16(CMD_01,CMD_LENGTH - 2,pucCRCHi ,pucCRCLo);
     CMD_01[CMD_LENGTH - 1] = pucCRCHi;
     CMD_01[CMD_LENGTH - 2] = pucCRCLo;
-    cout<<hex<<static_cast<int>(pucCRCHi)<<static_cast<int>(pucCRCLo)<<"result:"<<result<<endl;
     // 初始化串口
-    serial::Serial ser(SERIAL_PORT, BAUDRATE, serial::Timeout::simpleTimeout(100));
+    serial::Serial ser(SERIAL_PORT, BAUDRATE, serial::Timeout::simpleTimeout(1000));
 
 
     // 启动发送和接收线程
