@@ -64,7 +64,7 @@ void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_varia
                 default:
                     break;
                 }
-                usleep(3000); // 30毫秒
+                usleep(8000); // 5毫秒
             }
         }
         cv.notify_all();
@@ -92,7 +92,7 @@ void parseResponse(const Frame* frame,int16_t &header_) {
         case 0x03:
             /* code */
             header_ = 3;
-            data2 = (frame->data[0] << 8) | frame->data[1];
+            data3 = (frame->data[0] << 8) | frame->data[1];
             break;
         case 0x04 :
             /* code */
