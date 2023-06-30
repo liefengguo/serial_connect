@@ -18,6 +18,7 @@ uint8_t CMD_03[CMD_LENGTH] = {0x03, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
 uint8_t CMD_04[CMD_LENGTH] = {0x04, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
 uint8_t CMD_05[CMD_LENGTH] = {0x05, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
 uint8_t CMD_06[CMD_LENGTH] = {0x06, 0x03, 0x01, 0x00, 0x00, 0x01, 0x85,0xF6};
+uint16_t data1 ,data2,data3,data4,data5,data6;
 
 // 接收数据帧结构
 #define FRAME_LENGTH 7
@@ -38,66 +39,94 @@ void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_varia
         // 发送控制指令
         {
             std::lock_guard<std::mutex> lock(mutex);
-            ser.write(CMD_01, CMD_LENGTH);
-            usleep(10);
-            ser.write(CMD_02, CMD_LENGTH);
-            usleep(10);
-            ser.write(CMD_03, CMD_LENGTH);
-            usleep(10);
-            ser.write(CMD_04, CMD_LENGTH);
-            usleep(10);
-            ser.write(CMD_05, CMD_LENGTH);  usleep(10);
-            ser.write(CMD_06, CMD_LENGTH);
+            for (int  i = 1; i < 7; i++)
+            {
+                switch (i)
+                {
+                case 1:
+                    ser.write(CMD_01, CMD_LENGTH);
+                    break;
+                case 2:
+                    ser.write(CMD_02, CMD_LENGTH);
+                    break;
+                case 3:
+                    ser.write(CMD_03, CMD_LENGTH);
+                    break;
+                case 4:
+                    ser.write(CMD_04, CMD_LENGTH);
+                    break;
+                case 5:
+                    ser.write(CMD_05, CMD_LENGTH);
+                    break;
+                case 6:
+                    ser.write(CMD_06, CMD_LENGTH);
+                    break;
+                default:
+                    break;
+                }
+                usleep(3000); // 30毫秒
+            }
         }
         cv.notify_all();
-        std::this_thread::sleep_for(std::chrono::milliseconds(600));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
-uint16_t parseResponse(const Frame* frame,int16_t &header_) {
+void parseResponse(const Frame* frame,int16_t &header_) {
         if (frame->address != 0x03) {
             //  int count = ser.read(buffer, FRAME_LENGTH-1);
              ROS_ERROR("Invalid response header.");
             //  continue; // 解析失败，跳过此次循环
         }
-        uint16_t data1 = (frame->data[0] << 8) | frame->data[1];
+        
         switch (frame->header)
         {
         case HEADER:
             /* code */
             header_ = 1;
+            data1 = (frame->data[0] << 8) | frame->data[1];
             break;
         case 0x02:
             header_ = 2;
+            data2 = (frame->data[0] << 8) | frame->data[1];
             break;
         case 0x03:
             /* code */
             header_ = 3;
+            data2 = (frame->data[0] << 8) | frame->data[1];
             break;
         case 0x04 :
             /* code */
             header_ = 4;
+            data4 = (frame->data[0] << 8) | frame->data[1];
             break;
         case 0x05:
             /* code */
             header_ = 5;
+            data5 = (frame->data[0] << 8) | frame->data[1];
             break;
         case 0x06:
             /* code */
             header_ = 6;
+            data6 = (frame->data[0] << 8) | frame->data[1];
             break;
         default:
             break;
         }
-    return data1;
 }
 // 接收指令线程函数
 void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_variable &cv, bool &isRunning, ros::Publisher &pub) {
     while (isRunning) {
         // 等待发送指令
-        {
-            std::unique_lock<std::mutex> lock(mutex);
-            cv.wait(lock);
-        }
+        // {
+        //     std::unique_lock<std::mutex> lock(mutex);
+        //     cv.wait(lock);
+        // }
+        data1 = 0;
+        data2 = 0;
+        data3 = 0;
+        data4 = 0;
+        data5 = 0;
+        data6 = 0;
         uint8_t buffer1[FRAME_LENGTH];
         uint8_t buffer2[FRAME_LENGTH];
         uint8_t buffer3[FRAME_LENGTH];
@@ -115,11 +144,27 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
 
         if (count1 != FRAME_LENGTH) {
              ROS_ERROR("Failed to read response.");
-             continue; // 读取失败，跳过此次循环
+            cout<< " count1 :" <<count1<<std::endl;
+            //  continue; // 读取失败，跳过此次循环
         }
        for (int i = 0; i < FRAME_LENGTH; ++i) {
-           cout<< " buffer :"<<hex <<static_cast<int>(buffer1[i])<<std::endl;
+           cout<< " buffer1 :"<<static_cast<int>(buffer1[i])<<std::endl;
        }
+       for (int i = 0; i < FRAME_LENGTH; ++i) {
+           cout<< " buffer2 :" <<static_cast<int>(buffer2[i])<<std::endl;
+       }       
+       for (int i = 0; i < FRAME_LENGTH; ++i) {
+           cout<< " buffer3 :"<<static_cast<int>(buffer3[i])<<std::endl;
+       }       
+       for (int i = 0; i < FRAME_LENGTH; ++i) {
+           cout<< " buffer5 :"<<static_cast<int>(buffer5[i])<<std::endl;
+       }       
+       for (int i = 0; i < FRAME_LENGTH; ++i) {
+           cout<< " buffer4 :" <<static_cast<int>(buffer4[i])<<std::endl;
+       }       
+       for (int i = 0; i < FRAME_LENGTH; ++i) {
+           cout<< " buffer6 :"<<static_cast<int>(buffer6[i])<<std::endl;
+       }      
 
         // 解析数据
         int16_t head1,head2,head3,head4,head5,head6;
@@ -130,53 +175,12 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
         Frame *frame5 = (Frame *)buffer5;
         Frame *frame6 = (Frame *)buffer6;
 
-        // if (frame->address != 0x03) {
-        //      int count = ser.read(buffer1, FRAME_LENGTH-1);
-        //      ROS_ERROR("Invalid response header.");
-        //      continue; // 解析失败，跳过此次循环
-        // }
-        uint16_t data1 ,data2,data3,data4,data5,data6;
-        data1 = parseResponse(frame1,head1);
-        data2 = parseResponse(frame2,head2);
-        data3 = parseResponse(frame3,head3);
-        data4 = parseResponse(frame4,head4);
-        data5 = parseResponse(frame5,head5);
-        data6 = parseResponse(frame6,head6);
-        // switch (frame->header)
-        // {
-        // case HEADER:
-        //     /* code */
-        //     data1 = (frame->data[0] << 8) | frame->data[1];
-        //     break;
-        // case 0x02:
-        //     data2 = (frame->data[0] << 8) | frame->data[1];
-        //     break;
-        // case 0x03:
-        //     /* code */
-        //     data3 = (frame->data[0] << 8) | frame->data[1];
-        //     break;
-        // case 0x04 :
-        //     /* code */
-        //     data4 = (frame->data[0] << 8) | frame->data[1];
-        //     break;
-        // case 0x05:
-        //     /* code */
-        //     data5 = (frame->data[0] << 8) | frame->data[1];
-        //     break;
-        // case 0x06:
-        //     /* code */
-        //     data6 = (frame->data[0] << 8) | frame->data[1];
-        //     break;
-        // default:
-        //     break;
-        // }
-        // uint16_t crc = usMBCRC16(buffer,FRAME_LENGTH - 2);
-        // if(frame->checksum != crc){
-        //     int count = ser.read(buffer, FRAME_LENGTH-3);
-        //     ROS_ERROR("Invalid CRC.");
-        //     continue; // 解析失败，跳过此次循环
-        //  }
-
+        parseResponse(frame1,head1);
+        parseResponse(frame2,head2);
+        parseResponse(frame3,head3);
+        parseResponse(frame4,head4);
+        parseResponse(frame5,head5);
+        parseResponse(frame6,head6);
         // 发布ROS话题
         serial_connect::a22_data a22_data;
         std::vector<int32_t> datas;
