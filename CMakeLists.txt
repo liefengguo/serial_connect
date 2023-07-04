@@ -185,11 +185,19 @@ add_dependencies(radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TAR
 target_link_libraries(radar
   ${catkin_LIBRARIES}
 )
-add_executable(decition_radar src/decition_radar.cpp src/adaptive_filter.cpp)
+
+# add_executable(decition_radar src/decition_radar.cpp src/adaptive_filter.cpp)
  
-add_dependencies(decition_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(decition_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
-target_link_libraries(decition_radar
+# target_link_libraries(decition_radar
+#   ${catkin_LIBRARIES}
+# )
+add_executable(six_decition_radar src/six_decition_radar.cpp src/adaptive_filter.cpp)
+ 
+add_dependencies(six_decition_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
+target_link_libraries(six_decition_radar
   ${catkin_LIBRARIES}
 )
 ## Rename C++ executable without prefix

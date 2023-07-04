@@ -108,9 +108,9 @@ void Receive(uint8_t bytedata)
                 step = 0;
             }
 	        break;
-	    case 3://接收命令字节状态
+	    case 3://接收data字节状态
 	        Buf[cnt++] = bytedata;
-	        if(data_ptr + len == &Buf[cnt])//利用指针地址偏移判断是否接收完len位数据
+	        if(data_ptr + 2 == &Buf[cnt])//利用指针地址偏移判断是否接收完len位数据
 	        {
 	            step++;
 	        }
@@ -122,16 +122,13 @@ void Receive(uint8_t bytedata)
 	    case 5://接收crc16校验低8位字节
 	        crc16 <<= 8;
 	        crc16 += bytedata;
-	        if(crc16 == usMBCRC16(Buf,2))//校验正确进入下一状态
-	        {
+	        if(crc16 == usMBCRC16(Buf,2)){//校验正确进入下一状态
 	            step = 0;
 	        }
-	        else if(bytedata== 0x01 || bytedata== 0x02|| bytedata== 0x03 || bytedata== 0x04 || bytedata== 0x05 || bytedata== 0x06 )
-	        {
+	        else if(bytedata== 0x01 || bytedata== 0x02|| bytedata== 0x03 || bytedata== 0x04 || bytedata== 0x05 || bytedata== 0x06 ){
 	            step = 1;
 	        }
-	        else
-	        {
+	        else{
 	            step = 0;
 	        }
             int16_t head;
@@ -193,85 +190,29 @@ void parseResponse(const Frame* frame,int16_t &header_) {
 // 接收指令线程函数
 void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_variable &cv, bool &isRunning, ros::Publisher &pub) {
     while (isRunning) {
-        // 等待发送指令
-        // {
-        //     std::unique_lock<std::mutex> lock(mutex);
-        //     cv.wait(lock);
-        // }
-        data1 = last_data1;
-        data2 = last_data2;
-        data3 = last_data3;
-        data4 = last_data4;
-        data5 = last_data5;
-        data6 = last_data6;
-        uint8_t buffer1[FRAME_LENGTH];
-        uint8_t buffer2[FRAME_LENGTH];
-        uint8_t buffer3[FRAME_LENGTH];
-        uint8_t buffer4[FRAME_LENGTH];
-        uint8_t buffer5[FRAME_LENGTH];
-        uint8_t buffer6[FRAME_LENGTH];
-
+        static int index = 0;
+        index++;
+        uint8_t buffer[1];
         // 读取返回数据
-        int count1 = ser.read(buffer1, FRAME_LENGTH);
-        int count2 = ser.read(buffer2, FRAME_LENGTH);
-        int count3 = ser.read(buffer3, FRAME_LENGTH);
-        int count4 = ser.read(buffer4, FRAME_LENGTH);
-        int count5 = ser.read(buffer5, FRAME_LENGTH);
-        int count6 = ser.read(buffer6, FRAME_LENGTH);
-
-        if (count1 != FRAME_LENGTH) {
-             ROS_ERROR("Failed to read response.");
-            cout<< " count1 :" <<count1<<std::endl;
-            //  continue; // 读取失败，跳过此次循环
+        int count1 = ser.read(buffer, 1);
+        Receive(buffer[0]);
+        cout<< " buffer1 :"<<static_cast<int>(buffer[0])<<std::endl;
+        if( index == 42){
+            index = 0;
+            // 发布ROS话题
+            serial_connect::a22_data a22_data;
+            std::vector<int32_t> datas;
+            datas.push_back(data1);
+            datas.push_back(data2);
+            datas.push_back(data3);
+            datas.push_back(data4);
+            datas.push_back(data5);
+            datas.push_back(data6);
+            std::cout<<"1号："<<data1<<" 2号："<<data2<<" 3号："<<data3<<" 4号："<<data4<<" 5号："<<data5<<" 6号："<<data6<<std::endl;
+            // std::cout<<"1号："<<data1<< " 03:"<< static_cast<int>(frame->data[0]) << " 04:"<<static_cast<int>(frame->data[1])<<std::endl;
+            a22_data.a22_datas = datas;
+            pub.publish(a22_data);
         }
-       for (int i = 0; i < FRAME_LENGTH; ++i) {
-           cout<< " buffer1 :"<<static_cast<int>(buffer1[i])<<std::endl;
-       }
-       for (int i = 0; i < FRAME_LENGTH; ++i) {
-           cout<< " buffer2 :" <<static_cast<int>(buffer2[i])<<std::endl;
-       }       
-       for (int i = 0; i < FRAME_LENGTH; ++i) {
-           cout<< " buffer3 :"<<static_cast<int>(buffer3[i])<<std::endl;
-       }       
-       for (int i = 0; i < FRAME_LENGTH; ++i) {
-           cout<< " buffer5 :"<<static_cast<int>(buffer5[i])<<std::endl;
-       }       
-       for (int i = 0; i < FRAME_LENGTH; ++i) {
-           cout<< " buffer4 :" <<static_cast<int>(buffer4[i])<<std::endl;
-       }       
-       for (int i = 0; i < FRAME_LENGTH; ++i) {
-           cout<< " buffer6 :"<<static_cast<int>(buffer6[i])<<std::endl;
-       }      
-
-        // 解析数据
-        int16_t head1,head2,head3,head4,head5,head6;
-        Frame *frame1 = (Frame *)buffer1;
-        Frame *frame2 = (Frame *)buffer2;
-        Frame *frame3 = (Frame *)buffer3;
-        Frame *frame4 = (Frame *)buffer4;
-        Frame *frame5 = (Frame *)buffer5;
-        Frame *frame6 = (Frame *)buffer6;
-
-        parseResponse(frame1,head1);
-        parseResponse(frame2,head2);
-        parseResponse(frame3,head3);
-        parseResponse(frame4,head4);
-        parseResponse(frame5,head5);
-        parseResponse(frame6,head6);
-        
-        // 发布ROS话题
-        serial_connect::a22_data a22_data;
-        std::vector<int32_t> datas;
-        datas.push_back(data1);
-        datas.push_back(data2);
-        datas.push_back(data3);
-        datas.push_back(data4);
-        datas.push_back(data5);
-        datas.push_back(data6);
-        std::cout<<"1号："<<data1<<" 2号："<<data2<<" 3号："<<data3<<" 4号："<<data4<<" 5号："<<data5<<" 6号："<<data6<<std::endl;
-        // std::cout<<"1号："<<data1<< " 03:"<< static_cast<int>(frame->data[0]) << " 04:"<<static_cast<int>(frame->data[1])<<std::endl;
-        a22_data.a22_datas = datas;
-        pub.publish(a22_data);
     }
 }
 

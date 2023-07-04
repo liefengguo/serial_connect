@@ -3,19 +3,19 @@
 
 #include <deque>
 #include <iostream>
+#include <vector>
 class AdaptiveFilter {
 public:
-    AdaptiveFilter(int bufferSize, double threshold);
-
-    double filter(double value);
+    AdaptiveFilter(int bufferSize, int threshold);
+    int filter(int value);
+    std::vector<int32_t> filter(std::vector<int32_t> value);
 
 private:
     int bufferSize;
-    double threshold;
-    std::deque<double> buffer;
+    int threshold;
+    std::deque<int> buffer;
 
-    bool isOutlier(double value) const;
-    double calculateAverage() const;
+    bool isOutlier(int value) const;
+    int calculateAverage() const;
 };
-
 #endif  // ADAPTIVE_FILTER_H

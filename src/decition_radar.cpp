@@ -7,12 +7,12 @@ class DistanceSensor {
 private:
     ros::NodeHandle nh_;
     ros::Subscriber sub_;
-    double distance_;
+    int distance_;
 
-    double targetDistance ;  // 目标距离
-    double distanceThreshold ;  // 距离阈值
+    int targetDistance ;  // 目标距离
+    int distanceThreshold ;  // 距离阈值
     int bufferSize; 
-    double threshold;
+    int threshold;
 
 
 public:
@@ -20,17 +20,17 @@ public:
         sub_ = nh_.subscribe("temperature", 1, &DistanceSensor::distanceCallback, this);
 
 
-        nh_.param<double>("distance_monitor/targetDistance", targetDistance, 230);
-        nh_.param<double>("distance_monitor/distanceThreshold", distanceThreshold, 80);
+        nh_.param<int>("distance_monitor/targetDistance", targetDistance, 230);
+        nh_.param<int>("distance_monitor/distanceThreshold", distanceThreshold, 80);
         nh_.param<int>("distance_monitor/bufferSize", bufferSize, 20);
-        nh_.param<double>("distance_monitor/threshold", threshold, 50);
+        nh_.param<int>("distance_monitor/threshold", threshold, 50);
     }
 
     void distanceCallback(const std_msgs::Int32::ConstPtr& msg) {
         distance_ = msg->data;
         static AdaptiveFilter filter(bufferSize,threshold);  
 
-        double filteredDistance = filter.filter(distance_);  // 应用自适应滤波器
+        int filteredDistance = filter.filter(distance_);  // 应用自适应滤波器
         std::cout<<"真值："<<distance_<< "距离："<<filteredDistance<<std::endl;
 
         // 判断距离是否偏离目标距离范围
@@ -50,7 +50,7 @@ public:
         }
     }
 
-    double getDistance() {
+    int getDistance() {
         return distance_;
     }
 };
