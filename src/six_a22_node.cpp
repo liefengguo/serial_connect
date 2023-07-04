@@ -73,6 +73,55 @@ void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_varia
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
+void parseResponse(const Frame* frame,int16_t &header_) {
+        if (frame->address != 0x03) {
+            //  int count = ser.read(buffer, FRAME_LENGTH-1);
+             ROS_ERROR("Invalid response header.");
+            //  continue; // 解析失败，跳过此次循环
+        }
+        
+        switch (frame->header)
+        {
+        case HEADER:
+            /* code */
+            header_ = 1;
+            data1 = (frame->data[0] << 8) | frame->data[1];
+            last_data1 = data1;
+            break;
+        case 0x02:
+            header_ = 2;
+            data2 = (frame->data[0] << 8) | frame->data[1];
+            last_data2 = data2;
+            break;
+        case 0x03:
+            /* code */
+            header_ = 3;
+            data3 = (frame->data[0] << 8) | frame->data[1];
+            last_data3 = data3;
+            break;
+        case 0x04 :
+            /* code */
+            header_ = 4;
+            data4 = (frame->data[0] << 8) | frame->data[1];
+            last_data4 = data4;
+            break;
+        case 0x05:
+            /* code */
+            header_ = 5;
+            data5 = (frame->data[0] << 8) | frame->data[1];
+            last_data5 = data5;
+            break;
+        case 0x06:
+            /* code */
+            header_ = 6;
+            data6 = (frame->data[0] << 8) | frame->data[1];
+            last_data6 = data6;
+            break;
+        default:
+            break;
+        }
+}
+
 //接收数据
 void Receive(uint8_t bytedata)
 {
@@ -135,58 +184,10 @@ void Receive(uint8_t bytedata)
             Frame *frame = (Frame *)Buf;
             parseResponse(frame,head);
 	        break;
-	    default:step=0;break;//多余状态，正常情况下不可能出现
+	    // default:step=0;break;//多余状态，正常情况下不可能出现
 	}
 }
 
-void parseResponse(const Frame* frame,int16_t &header_) {
-        if (frame->address != 0x03) {
-            //  int count = ser.read(buffer, FRAME_LENGTH-1);
-             ROS_ERROR("Invalid response header.");
-            //  continue; // 解析失败，跳过此次循环
-        }
-        
-        switch (frame->header)
-        {
-        case HEADER:
-            /* code */
-            header_ = 1;
-            data1 = (frame->data[0] << 8) | frame->data[1];
-            last_data1 = data1;
-            break;
-        case 0x02:
-            header_ = 2;
-            data2 = (frame->data[0] << 8) | frame->data[1];
-            last_data2 = data2;
-            break;
-        case 0x03:
-            /* code */
-            header_ = 3;
-            data3 = (frame->data[0] << 8) | frame->data[1];
-            last_data3 = data3;
-            break;
-        case 0x04 :
-            /* code */
-            header_ = 4;
-            data4 = (frame->data[0] << 8) | frame->data[1];
-            last_data4 = data4;
-            break;
-        case 0x05:
-            /* code */
-            header_ = 5;
-            data5 = (frame->data[0] << 8) | frame->data[1];
-            last_data5 = data5;
-            break;
-        case 0x06:
-            /* code */
-            header_ = 6;
-            data6 = (frame->data[0] << 8) | frame->data[1];
-            last_data6 = data6;
-            break;
-        default:
-            break;
-        }
-}
 // 接收指令线程函数
 void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_variable &cv, bool &isRunning, ros::Publisher &pub) {
     while (isRunning) {

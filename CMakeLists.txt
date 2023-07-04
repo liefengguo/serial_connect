@@ -156,7 +156,7 @@ target_link_libraries(a22_radar
 # target_link_libraries(six_a22_radar
 #   ${catkin_LIBRARIES}
 # )
-add_executable(six_a22 src/six_a22.cpp src/add_CRC.cpp)
+add_executable(six_a22 src/six_a22_node.cpp src/add_CRC.cpp)
 
 add_dependencies(six_a22 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
