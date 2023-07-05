@@ -20,7 +20,7 @@ uint8_t CMD_05[CMD_LENGTH] = {0x05, 0x03, 0x01, 0x01, 0x00, 0x01, 0x85,0xF6};
 uint8_t CMD_06[CMD_LENGTH] = {0x06, 0x03, 0x01, 0x01, 0x00, 0x01, 0x85,0xF6};
 uint16_t data1 ,data2,data3,data4,data5,data6;
 uint16_t last_data1 ,last_data2,last_data3,last_data4,last_data5,last_data6 = 0;
-
+static int index = 0;
 
 // 接收数据帧结构
 #define FRAME_LENGTH 7
@@ -79,6 +79,7 @@ void parseResponse(const Frame* frame,int16_t &header_) {
              ROS_ERROR("Invalid response header.");
             //  continue; // 解析失败，跳过此次循环
         }
+        index++;
         
         switch (frame->header)
         {
@@ -183,6 +184,7 @@ void Receive(uint8_t bytedata)
             int16_t head;
             Frame *frame = (Frame *)Buf;
             parseResponse(frame,head);
+
 	        break;
 	    // default:step=0;break;//多余状态，正常情况下不可能出现
 	}
@@ -191,8 +193,6 @@ void Receive(uint8_t bytedata)
 // 接收指令线程函数
 void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_variable &cv, bool &isRunning, ros::Publisher &pub) {
     while (isRunning) {
-        static int index = 0;
-        index++;
         uint8_t buffer[1];
         // 读取返回数据
         int count1 = ser.read(buffer, 1);
