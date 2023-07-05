@@ -20,7 +20,7 @@ uint8_t CMD_05[CMD_LENGTH] = {0x05, 0x03, 0x01, 0x01, 0x00, 0x01, 0x85,0xF6};
 uint8_t CMD_06[CMD_LENGTH] = {0x06, 0x03, 0x01, 0x01, 0x00, 0x01, 0x85,0xF6};
 uint16_t data1 ,data2,data3,data4,data5,data6;
 uint16_t last_data1 ,last_data2,last_data3,last_data4,last_data5,last_data6 = 0;
-static int index = 0;
+static int index_i;
 
 // 接收数据帧结构
 #define FRAME_LENGTH 7
@@ -79,7 +79,7 @@ void parseResponse(const Frame* frame,int16_t &header_) {
              ROS_ERROR("Invalid response header.");
             //  continue; // 解析失败，跳过此次循环
         }
-        index++;
+        index_i++;
         
         switch (frame->header)
         {
@@ -198,8 +198,8 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
         int count1 = ser.read(buffer, 1);
         Receive(buffer[0]);
         cout<< " buffer1 :"<<static_cast<int>(buffer[0])<<std::endl;
-        if( index == 42){
-            index = 0;
+        if( index_i == 5){
+            index_i = 0;
             // 发布ROS话题
             serial_connect::a22_data a22_data;
             std::vector<int32_t> datas;

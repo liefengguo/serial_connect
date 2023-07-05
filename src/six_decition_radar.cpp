@@ -14,8 +14,6 @@ private:
     int distanceThreshold ;  // 距离阈值
     int bufferSize; 
     int threshold;
-
-
 public:
     DistanceSensor() {
         sub_ = nh_.subscribe("a22_radar", 1, &DistanceSensor::distanceCallback, this);
@@ -38,7 +36,7 @@ public:
         filteredDistance1 = filter.filter(distance_[1]); 
         filteredDistance2 = filter.filter(distance_[2]);  
         filteredDistance3 = filter.filter(distance_[3]);  
-        filteredDistance4 = filter.filter(distance_[4]);  
+        filteredDistance4 = filter.filter(distance_[4]);
         filteredDistance5 = filter.filter(distance_[5]);
 
         std::cout<<"真值1："<<distance_[1]<< "距离："<<filteredDistance1<<std::endl;
