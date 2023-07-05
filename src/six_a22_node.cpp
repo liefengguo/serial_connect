@@ -75,7 +75,6 @@ void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_varia
 }
 void parseResponse(const Frame* frame,int16_t &header_) {
         if (frame->address != 0x03) {
-            //  int count = ser.read(buffer, FRAME_LENGTH-1);
              ROS_ERROR("Invalid response header.");
             //  continue; // 解析失败，跳过此次循环
         }

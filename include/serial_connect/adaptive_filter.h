@@ -14,8 +14,11 @@ private:
     int bufferSize;
     int threshold;
     std::deque<int> buffer;
+    int average;
+
 
     bool isOutlier(int value) const;
     int calculateAverage() const;
+    int calculateStandardDeviation() const;
 };
 #endif  // ADAPTIVE_FILTER_H
