@@ -170,6 +170,7 @@ add_dependencies(six_a22 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_T
 target_link_libraries(six_a22
   ${catkin_LIBRARIES}
 )
+
 # add_executable(add_CRC src/add_CRC.cpp)
 
 # add_dependencies(add_CRC ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -200,11 +201,18 @@ target_link_libraries(radar
 # target_link_libraries(decition_radar
 #   ${catkin_LIBRARIES}
 # )
-add_executable(six_decition_radar src/six_decition_radar.cpp src/adaptive_filter.cpp)
+# add_executable(six_decition_radar src/six_decition_radar.cpp src/adaptive_filter.cpp)
 
-add_dependencies(six_decition_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(six_decition_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
-target_link_libraries(six_decition_radar
+# target_link_libraries(six_decition_radar
+#   ${catkin_LIBRARIES}
+# )
+add_executable(RadarController src/radar_controller/RadarController.cpp src/radar_controller/RadarController_node.cpp 
+                src/radar_controller/VRFKReader.cpp src/six_decition_radar.cpp src/adaptive_filter.cpp)
+
+add_dependencies(RadarController ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(RadarController
   ${catkin_LIBRARIES}
 )
 ## Rename C++ executable without prefix
