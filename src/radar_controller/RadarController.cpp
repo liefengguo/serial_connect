@@ -62,7 +62,7 @@ void RadarController::controlByRadar() {
             vel_msg.angular.z = 0;
             vel_msg.linear.x = linear_x;
             radar_cmd_vel.publish(vel_msg);
-            // std::cout<< "OK! go "<<std::endl;
+            std::cout<< "OK! go "<<std::endl;
         }
     } else {
         // RTK is not good, use alternative control method

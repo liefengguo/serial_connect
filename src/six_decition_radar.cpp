@@ -33,19 +33,19 @@ void DistanceSensor::distanceCallback(const serial_connect::a22_data::ConstPtr& 
     std::cout<<"真值0："<<distance_[0]<< "距离："<<filteredDistance0<<std::endl;
 
     // 判断距离是否偏离目标距离范围
-    if (filteredDistance1 < targetDistance - distanceThreshold ) {
-        // 距离过近，需要向左调整车辆行驶方向
-        // 在这里添加调整车辆方向的代码
-        std::cout<< "距离过近，left:"<<filteredDistance2 - targetDistance<<std::endl;
-    } else if (filteredDistance1 > targetDistance + distanceThreshold) {
-        // 距离过远，需要向左调整车辆行驶方向
-        // 在这里添加调整车辆方向的代码
-        std::cout<< "distance too far， right please!!"<<filteredDistance2 - targetDistance<<std::endl;
-    } else {
-        // 距离在目标范围内，维持当前行驶方向
-        // 在这里添加维持当前行驶方向的代码
-        std::cout<< "OK! go "<<std::endl;
-    }
+    // if (filteredDistance1 < targetDistance - distanceThreshold ) {
+    //     // 距离过近，需要向左调整车辆行驶方向
+    //     // 在这里添加调整车辆方向的代码
+    //     std::cout<< "距离过近，left:"<<filteredDistance2 - targetDistance<<std::endl;
+    // } else if (filteredDistance1 > targetDistance + distanceThreshold) {
+    //     // 距离过远，需要向左调整车辆行驶方向
+    //     // 在这里添加调整车辆方向的代码
+    //     std::cout<< "distance too far， right please!!"<<filteredDistance2 - targetDistance<<std::endl;
+    // } else {
+    //     // 距离在目标范围内，维持当前行驶方向
+    //     // 在这里添加维持当前行驶方向的代码
+    //     std::cout<< "OK! go "<<std::endl;
+    // }
 }
 
 int DistanceSensor::getFilteredDistance1() const {
