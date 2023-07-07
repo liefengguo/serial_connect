@@ -10,7 +10,7 @@
     <param name="targetDistance" value="230" />
     <param name="distanceThreshold" value="80.0" />
     <param name="bufferSize" value="20" />
-    <param name="threshold" value="50.0" />
+    <param name="threshold" value="50000.0" />
   </node>
 
 </launch>

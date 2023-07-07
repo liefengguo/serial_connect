@@ -11,14 +11,21 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   message_generation
   serial
+  nav_msgs
+
+  geometry_msgs
+  message_generation
 )
 add_message_files(
   FILES
   a22_data.msg
+  VRTK.msg
 )
 generate_messages(
-   DEPENDENCIES
-   std_msgs
+    DEPENDENCIES
+    std_msgs
+    nav_msgs
+    geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -194,7 +201,7 @@ target_link_libraries(radar
 #   ${catkin_LIBRARIES}
 # )
 add_executable(six_decition_radar src/six_decition_radar.cpp src/adaptive_filter.cpp)
- 
+
 add_dependencies(six_decition_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
 target_link_libraries(six_decition_radar

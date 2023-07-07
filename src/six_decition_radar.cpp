@@ -15,9 +15,9 @@ private:
     int bufferSize; 
     int threshold;
 public:
+    int filteredDistance1 ,filteredDistance2,filteredDistance3,filteredDistance4,filteredDistance5,filteredDistance0;
     DistanceSensor() {
         sub_ = nh_.subscribe("a22_radar", 1, &DistanceSensor::distanceCallback, this);
-
         nh_.param<int>("six_decition_radar/targetDistance", targetDistance, 230);
         nh_.param<int>("six_decition_radar/distanceThreshold", distanceThreshold, 80);
         nh_.param<int>("six_decition_radar/bufferSize", bufferSize, 20);
@@ -35,10 +35,9 @@ public:
         static AdaptiveFilter filter5(bufferSize,threshold);
         static AdaptiveFilter filter6(bufferSize,threshold); 
 
-        int filteredDistance1 ,filteredDistance2,filteredDistance3,filteredDistance4,filteredDistance5,filteredDistance0;
         int lastDistance1,lastDistance2,lastDistance3,lastDistance4,lastDistance5,lastDistance6;
 
-        filteredDistance0 = filter1.filter(distance_[0]); 
+        filteredDistance0 = filter1.filter(distance_[0]);
         filteredDistance1 = filter2.filter(distance_[1]);
         filteredDistance2 = filter3.filter(distance_[2]);
         filteredDistance3 = filter4.filter(distance_[3]);  

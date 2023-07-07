@@ -34,7 +34,6 @@ typedef struct {
     uint16_t  checksum; // 校验位
 } Frame;
 
-
 // 发送指令线程函数
 void sendThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_variable &cv, bool &isRunning) {
     while (isRunning) {
