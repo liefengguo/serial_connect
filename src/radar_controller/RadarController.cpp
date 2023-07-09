@@ -18,7 +18,6 @@ RadarController::~RadarController() {
 void RadarController::setGNSSStatus(int status) {
     gnss_status = status;
 }
-
 void RadarController::setRadar1(int value) {
     radar1 = value;
 }
