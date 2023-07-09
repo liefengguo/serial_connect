@@ -24,6 +24,7 @@ private:
     int flag;
 public:
     RadarController();
+    ~RadarController();
     // RadarController(const DistanceSensor& distanceSensor, const VRFKReader& VRFK_Reader);
     void controlByRadar();
     void setGNSSStatus(int status);

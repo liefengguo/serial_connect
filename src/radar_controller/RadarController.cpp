@@ -8,7 +8,13 @@ RadarController::RadarController() {
     nh.param<int>("RadarController/threshold", linear_x, 0.3);
     nh.param<int>("RadarController/flag", flag, 1);
 }
-
+RadarController::~RadarController() {
+    vel_msg.angular.z = 0;  
+    vel_msg.linear.x = 0;
+    radar_cmd_vel.publish(vel_msg);
+    radar_cmd_vel.publish(vel_msg);
+    radar_cmd_vel.publish(vel_msg);
+}
 void RadarController::setGNSSStatus(int status) {
     gnss_status = status;
 }
@@ -53,11 +59,11 @@ void RadarController::controlByRadar() {
         // Add your code here for controlling the vehicle using the filtered distance
         // 判断距离是否偏离目标距离范围
         if (radar2 < targetDistance - distanceThreshold ) {
-            // std::cout<< "距离过近，left:"<<filteredDistance2 - targetDistance<<std::endl;
+            std::cout<< "距离过近，left:"<<std::endl;
             turnLeft();
         } else if (radar2 > targetDistance + distanceThreshold) {
             turnRight();
-            // std::cout<< "distance too far， right please!!"<<filteredDistance2 - targetDistance<<std::endl;
+            std::cout<< "distance too far， right please!!"<<std::endl;
         } else {
             vel_msg.angular.z = 0;
             vel_msg.linear.x = linear_x;
