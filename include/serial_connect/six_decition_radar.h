@@ -6,7 +6,9 @@
 #include "adaptive_filter.h"
 #include <std_msgs/Int32.h>
 #include <serial_connect/a22_data.h>
-
+#include <iostream>
+#include <fstream> 
+#include <sstream>
 class DistanceSensor {
 private:
     ros::NodeHandle nh_;
@@ -17,6 +19,7 @@ private:
     int distanceThreshold ;  // 距离阈值
     int bufferSize; 
     int threshold;
+    int log_flag;
     int filteredDistance1 ,filteredDistance2,filteredDistance3,filteredDistance4,filteredDistance5,filteredDistance0;
 public:
     DistanceSensor();
@@ -29,6 +32,7 @@ public:
     int getFilteredDistance4() const;
     int getFilteredDistance5() const;
     int getFilteredDistance0() const;
+    std::ofstream logfile;
 
 };
 #endif  // ADAPTIVE_FILTER_H

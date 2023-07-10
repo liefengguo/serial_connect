@@ -6,6 +6,15 @@ DistanceSensor::DistanceSensor() {
     nh_.param<int>("six_decition_radar/distanceThreshold", distanceThreshold, 80);
     nh_.param<int>("six_decition_radar/bufferSize", bufferSize, 20);
     nh_.param<int>("six_decition_radar/threshold", threshold, 50);
+    nh_.param<int>("six_decition_radar/log_flag", log_flag, 0);
+    if(log_flag){
+        std::string path = "/home/glf/log/";
+        std::stringstream  filename;
+        filename <<path<< "chaoshengbo"  << ".txt";
+        std::cout<<"file path :"<<filename.str()<<std::endl;
+        // 打开日志文件
+        logfile.open(filename.str(), std::ios::app);
+    }
 }
 void DistanceSensor::filterBigNum(int val,int lastVal){
     

@@ -17,8 +17,6 @@ int main(int argc, char** argv) {
         radar_controller.controlByRadar();
         ros::spinOnce();
     }
-
     // ros::spin();
-
     return 0;
 }
