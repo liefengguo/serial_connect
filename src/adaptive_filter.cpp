@@ -51,7 +51,7 @@ bool AdaptiveFilter::isOutlier(int value) const {
     // }
     int average = calculateAverage();
     // int standardDeviation = calculateStandardDeviation();
-    if (std::abs(value - average) > threshold || value > 1888) {
+    if (std::abs(value - average) > threshold || value > average + 200) {
         // std::cout<<"threshold * standardDeviation:"<<threshold * standardDeviation;
         return true;
     }

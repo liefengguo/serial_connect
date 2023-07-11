@@ -4,9 +4,9 @@ DistanceSensor::DistanceSensor() {
     sub_ = nh_.subscribe("a22_radar", 1, &DistanceSensor::distanceCallback, this);
     nh_.param<int>("six_decition_radar/targetDistance", targetDistance, 230);
     nh_.param<int>("six_decition_radar/distanceThreshold", distanceThreshold, 80);
-    nh_.param<int>("six_decition_radar/bufferSize", bufferSize, 20);
-    nh_.param<int>("six_decition_radar/threshold", threshold, 50);
-    nh_.param<int>("six_decition_radar/log_flag", log_flag, 0);
+    nh_.param<int>("RadarController/bufferSize", bufferSize, 20);
+    nh_.param<int>("RadarController/threshold", threshold, 5000);
+    nh_.param<int>("RadarController/log_flag", log_flag, 1);
     if(log_flag){
         std::string path = "/home/glf/log/";
         std::stringstream  filename;
@@ -16,20 +16,28 @@ DistanceSensor::DistanceSensor() {
         logfile.open(filename.str(), std::ios::app);
     }
 }
+DistanceSensor::~DistanceSensor() {
+    if(log_flag){
+        if (logfile.is_open()) {
+            std::cout<<"close!!!!"<<std::endl;
+            logfile.close();
+        }
+    }
+}
 void DistanceSensor::filterBigNum(int val,int lastVal){
     
 }
 void DistanceSensor::distanceCallback(const serial_connect::a22_data::ConstPtr& msg) {
     distance_ = msg->a22_datas;
+    
     static AdaptiveFilter filter1(bufferSize,threshold); 
     static AdaptiveFilter filter2(bufferSize,threshold); 
     static AdaptiveFilter filter3(bufferSize,threshold); 
     static AdaptiveFilter filter4(bufferSize,threshold);
     static AdaptiveFilter filter5(bufferSize,threshold);
-    static AdaptiveFilter filter6(bufferSize,threshold); 
+    static AdaptiveFilter filter6(bufferSize,threshold);
 
     int lastDistance1,lastDistance2,lastDistance3,lastDistance4,lastDistance5,lastDistance6;
-
     filteredDistance0 = filter1.filter(distance_[0]);
     filteredDistance1 = filter2.filter(distance_[1]);
     filteredDistance2 = filter3.filter(distance_[2]);
@@ -40,21 +48,26 @@ void DistanceSensor::distanceCallback(const serial_connect::a22_data::ConstPtr& 
     std::cout<<"真值1："<<distance_[1]<< "距离："<<filteredDistance1<<std::endl;
     std::cout<<"真值2："<<distance_[2]<< "距离："<<filteredDistance2<<std::endl;
     std::cout<<"真值0："<<distance_[0]<< "距离："<<filteredDistance0<<std::endl;
+    if(log_flag){
+        if (!logfile.is_open()) {
+            // 处理无法打开日志文件的情况
+            std::cout<<"no open!!!!"<<std::endl;
+            // return;
+    }
+        // logfile << distance_[0] << " ";
+        // logfile << distance_[1] << " ";
+        // logfile << distance_[2] << " ";
+        // logfile << distance_[3] << " ";
+        // logfile << distance_[4] << " ";
+        // logfile << distance_[5] << std::endl;
+        logfile << filteredDistance0 << " ";
+        logfile << filteredDistance1 << " ";
+        logfile << filteredDistance2 << " ";
+        logfile << filteredDistance3 << " ";
+        logfile << filteredDistance4 << " ";
+        logfile << filteredDistance5 <<  std::endl;
+    }
 
-    // 判断距离是否偏离目标距离范围
-    // if (filteredDistance1 < targetDistance - distanceThreshold ) {
-    //     // 距离过近，需要向左调整车辆行驶方向
-    //     // 在这里添加调整车辆方向的代码
-    //     std::cout<< "距离过近，left:"<<filteredDistance2 - targetDistance<<std::endl;
-    // } else if (filteredDistance1 > targetDistance + distanceThreshold) {
-    //     // 距离过远，需要向左调整车辆行驶方向
-    //     // 在这里添加调整车辆方向的代码
-    //     std::cout<< "distance too far， right please!!"<<filteredDistance2 - targetDistance<<std::endl;
-    // } else {
-    //     // 距离在目标范围内，维持当前行驶方向
-    //     // 在这里添加维持当前行驶方向的代码
-    //     std::cout<< "OK! go "<<std::endl;
-    // }
 }
 
 int DistanceSensor::getFilteredDistance1() const {

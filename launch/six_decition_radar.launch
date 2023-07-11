@@ -11,6 +11,7 @@
     <param name="distanceThreshold" value="80.0" />
     <param name="bufferSize" value="20" />
     <param name="threshold" value="50000.0" />
+    <param name="log_flag" value="1" />
   </node>
 
 </launch>

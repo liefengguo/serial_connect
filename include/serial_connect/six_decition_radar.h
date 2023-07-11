@@ -12,9 +12,8 @@
 class DistanceSensor {
 private:
     ros::NodeHandle nh_;
-    ros::Subscriber sub_;
     std::vector<int32_t> distance_;
-
+    // std::vector<std::vector<int32_t>> a22_buff;
     int targetDistance ;  // 目标距离
     int distanceThreshold ;  // 距离阈值
     int bufferSize; 
@@ -22,7 +21,9 @@ private:
     int log_flag;
     int filteredDistance1 ,filteredDistance2,filteredDistance3,filteredDistance4,filteredDistance5,filteredDistance0;
 public:
+    ros::Subscriber sub_;
     DistanceSensor();
+    ~DistanceSensor();
     void filterBigNum(int val,int lastVal);
     void distanceCallback(const serial_connect::a22_data::ConstPtr& msg);
 
@@ -33,6 +34,7 @@ public:
     int getFilteredDistance5() const;
     int getFilteredDistance0() const;
     std::ofstream logfile;
+    // bool flag_data;
 
 };
 #endif  // ADAPTIVE_FILTER_H
