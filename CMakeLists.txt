@@ -152,7 +152,7 @@ include
 add_executable(a22_radar src/a22_radar.cpp src/add_CRC.cpp)
 
 add_dependencies(a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- 
+
 target_link_libraries(a22_radar
   ${catkin_LIBRARIES}
 )
@@ -164,9 +164,7 @@ target_link_libraries(a22_radar
 #   ${catkin_LIBRARIES}
 # )
 add_executable(six_a22 src/six_a22_node.cpp src/add_CRC.cpp)
-
 add_dependencies(six_a22 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- 
 target_link_libraries(six_a22
   ${catkin_LIBRARIES}
 )

@@ -75,8 +75,6 @@ void receiveThreadFunc(serial::Serial &ser, std::mutex &mutex, std::condition_va
              ROS_ERROR("Invalid response header.");
              continue; // 解析失败，跳过此次循环
          }
-
-
         // 发布ROS话题
         std_msgs::Int32 msg;
         uint16_t data1 = (frame->data[0] << 8) | frame->data[1];

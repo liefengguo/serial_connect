@@ -14,14 +14,16 @@ private:
     int radar5; //左中
     int radar6; //左上
     int gnss_status; // GNSS 状态
-    int angular_z;
-    int linear_x;
+    double angular_z;
+    double linear_x;
     geometry_msgs::Twist vel_msg;
     int distanceThreshold;
     int targetDistance;
     void turnLeft();
     void turnRight();
     int flag;
+    bool log_flag;
+    std::ofstream logfile;
 public:
     RadarController();
     ~RadarController();
