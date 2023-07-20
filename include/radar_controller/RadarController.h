@@ -24,6 +24,8 @@ private:
     int flag;
     bool log_flag;
     std::ofstream logfile;
+    void line_controlByRadar();
+    void curvature_controlByRadar();
 public:
     RadarController();
     ~RadarController();

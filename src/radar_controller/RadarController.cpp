@@ -92,29 +92,50 @@ void RadarController::turnRight() {
         logfile << vel_msg.angular.z << std::endl;
     }
 }
+void RadarController::line_controlByRadar(){
+    if (radar2 < targetDistance - distanceThreshold ) {
+        std::cout<< "距离过近，left:"<<std::endl;
+        turnLeft();
+        // std::cout<<"radar2: "<<radar2<<" targetDistance - distanceThreshold: "<<targetDistance - distanceThreshold<<std::endl;
+    } else if (radar2 > targetDistance + distanceThreshold) {
+        turnRight();
+        std::cout<< "distance too far， right please!!"<<std::endl;
+        // std::cout<<"radar2: "<<radar2<<" targetDistance + distanceThreshold: "<<targetDistance + distanceThreshold<<std::endl;
+    } else {
+        vel_msg.angular.z = 0;
+        vel_msg.linear.x = linear_x;
+        radar_cmd_vel.publish(vel_msg);
+        std::cout<< "OK! go "<<std::endl;
+        // std::cout<<"radar2: "<<radar2<<" targetDistance - distanceThreshold: "<<targetDistance - distanceThreshold<<std::endl;
+        if(log_flag){
+            logfile << vel_msg.angular.z << std::endl;
+        }
+    }
+}
+void RadarController::curvature_controlByRadar(){
+    if (radar2 < targetDistance - distanceThreshold ) {
+        std::cout<< "距离过近，left:"<<std::endl;
+        turnLeft();
+        // std::cout<<"radar2: "<<radar2<<" targetDistance - distanceThreshold: "<<targetDistance - distanceThreshold<<std::endl;
+    } else if (radar2 > targetDistance + distanceThreshold) {
+        turnRight();
+        std::cout<< "distance too far， right please!!"<<std::endl;
+        // std::cout<<"radar2: "<<radar2<<" targetDistance + distanceThreshold: "<<targetDistance + distanceThreshold<<std::endl;
+    } else {
+        vel_msg.angular.z = 0;
+        vel_msg.linear.x = linear_x;
+        radar_cmd_vel.publish(vel_msg);
+        std::cout<< "OK! go "<<std::endl;
+        // std::cout<<"radar2: "<<radar2<<" targetDistance - distanceThreshold: "<<targetDistance - distanceThreshold<<std::endl;
+        if(log_flag){
+            logfile << vel_msg.angular.z << std::endl;
+        }
+    }
+}
 void RadarController::controlByRadar() {
     if (gnss_status < 7 || flag) {
-        // RTK is good, use ultrasonic sensor for lateral control
-        // Add your code here for controlling the vehicle using the filtered distance
-        // 判断距离是否偏离目标距离范围
-        if (radar2 < targetDistance - distanceThreshold ) {
-            std::cout<< "距离过近，left:"<<std::endl;
-            turnLeft();
-            // std::cout<<"radar2: "<<radar2<<" targetDistance - distanceThreshold: "<<targetDistance - distanceThreshold<<std::endl;
-        } else if (radar2 > targetDistance + distanceThreshold) {
-            turnRight();
-            std::cout<< "distance too far， right please!!"<<std::endl;
-            // std::cout<<"radar2: "<<radar2<<" targetDistance + distanceThreshold: "<<targetDistance + distanceThreshold<<std::endl;
-        } else {
-            vel_msg.angular.z = 0;
-            vel_msg.linear.x = linear_x;
-            radar_cmd_vel.publish(vel_msg);
-            std::cout<< "OK! go "<<std::endl;
-            // std::cout<<"radar2: "<<radar2<<" targetDistance - distanceThreshold: "<<targetDistance - distanceThreshold<<std::endl;
-            if(log_flag){
-                logfile << vel_msg.angular.z << std::endl;
-            }
-        }
+        line_controlByRadar();
+
     } else {
         // RTK is not good, use alternative control method
         // Add your code here for alternative control method

@@ -149,7 +149,7 @@ include
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/serial_connect_node.cpp)
-add_executable(a22_radar src/a22_radar.cpp src/add_CRC.cpp)
+add_executable(a22_radar src/serial_connect/a22_radar.cpp src/serial_connect/add_CRC.cpp)
 
 add_dependencies(a22_radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
@@ -163,7 +163,7 @@ target_link_libraries(a22_radar
 # target_link_libraries(six_a22_radar
 #   ${catkin_LIBRARIES}
 # )
-add_executable(six_a22 src/six_a22_node.cpp src/add_CRC.cpp)
+add_executable(six_a22 src/serial_connect/six_a22_node.cpp src/serial_connect/add_CRC.cpp)
 add_dependencies(six_a22 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(six_a22
   ${catkin_LIBRARIES}
@@ -184,7 +184,7 @@ target_link_libraries(six_a22
 # target_link_libraries(Sensor
 #   ${catkin_LIBRARIES}
 # )
-add_executable(radar src/radar.cpp)
+add_executable(radar src/serial_connect/radar.cpp)
  
 add_dependencies(radar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
@@ -207,7 +207,7 @@ target_link_libraries(radar
 #   ${catkin_LIBRARIES}
 # )
 add_executable(RadarController src/radar_controller/RadarController.cpp src/radar_controller/RadarController_node.cpp 
-                src/radar_controller/VRFKReader.cpp src/six_decition_radar.cpp src/adaptive_filter.cpp)
+                src/radar_controller/VRFKReader.cpp src/serial_connect/six_decition_radar.cpp src/serial_connect/adaptive_filter.cpp)
 
 add_dependencies(RadarController ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(RadarController

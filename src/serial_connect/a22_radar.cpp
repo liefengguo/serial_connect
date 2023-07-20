@@ -4,7 +4,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <std_msgs/Int32.h>
-#include "../include/serial_connect/add_CRC.h"
+#include "../../include/serial_connect/add_CRC.h"
 
 // 串口参数
 #define SERIAL_PORT "/dev/ttyUSB0"
